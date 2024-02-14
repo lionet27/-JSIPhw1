@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список статей</title>
+
+    <!-- Подключаем Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Расписание занятий</h1>
+        <ul class="list-group" id="activitiesList">
+           
+        </ul>
+       
+    </div>
+
+   
+
+    <script>
+        const activitiesList = document.getElementById('activitiesList');
+        
+
+        // Данные со списком занятий
+        const activitiesData = [
+            {
+                nameActivity: 'Аэробика',
+                timeActivity: 'пон,ср.19.00-21.00',
+                maxNumberParticipants: 25,
+                currentNumberParticipants: 10
+            },
+            {
+                nameActivity: 'Самбо',
+                timeActivity: 'вт, чет, сб.18.00-20.00',
+                maxNumberParticipants: 20,
+                currentNumberParticipants: 12
+            },
+            {
+                nameActivity: 'Бокс',
+                timeActivity: 'вт, ср, вс.18.00-20.00',
+                maxNumberParticipants: 18,
+                currentNumberParticipants: 16
+            },
+        ];
+
+        // Загрузка  занятий
+        activitiesData.forEach(activityData => {
+            const activityItem = createActivityElement(activityData.nameActivity, activityData.timeActivity,activityData.maxNumberParticipants,activityData.currentNumberParticipants);
+            activitiesList.appendChild(activityItem);
+        });
+
+        // Создание элемента занятия
+        function createActivityElement(nameActivity, timeActivity,maxNumberParticipants,currentNumberParticipants) {
+            const activityItem = document.createElement('li');
+            activityItem.classList.add('list-group-item');
+
+            const activityName = document.createElement('h2');
+            activityName.classList.add('mb-3');
+            activityName.textContent = nameActivity;
+
+            const activityTime = document.createElement('p');
+            activityTime.textContent = timeActivity;
+
+            const numberParticipantsMax = document.createElement('div');
+            // numberParticipantsMax.classList.add('maxNumberParticipants');
+            numberParticipantsMax.textContent =`Максимальное количество участников в группе:`;
+            const numberParticipantsMaxSpan=document.createElement('span');
+            numberParticipantsMaxSpan.classList.add('maxNumberParticipants');
+            numberParticipantsMaxSpan.textContent=maxNumberParticipants;
+            numberParticipantsMax.appendChild(numberParticipantsMaxSpan);
+
+            const numberParticipantscurrent = document.createElement('p');
+            // numberParticipantscurrent.classList.add('currentNumberParticipants');
+            numberParticipantscurrent.textContent =`Текущее количество участников в группе:`;
+            const numberParticipantscurrentSpan=document.createElement('span');
+            numberParticipantscurrentSpan.classList.add('currentNumberParticipants');
+            numberParticipantscurrentSpan.textContent=currentNumberParticipants;
+            numberParticipantscurrent.appendChild(numberParticipantscurrentSpan);
+
+            const recordButton = document.createElement('button');
+            recordButton.classList.add('btn', 'btn-warning', 'me-2');
+            recordButton.textContent = 'Записаться';
+
+            const cancelButton = document.createElement('button');
+            cancelButton.classList.add('btn', 'btn-danger');
+            cancelButton.textContent = 'Отменить запись';
+
+            activityItem.appendChild(activityName);
+            activityItem.appendChild(activityTime);
+            activityItem.appendChild(numberParticipantsMax);
+            activityItem.appendChild(numberParticipantscurrent);
+
+            activityItem.appendChild(recordButton);
+            activityItem.appendChild(cancelButton);
+
+            return activityItem;
+        }
+
+       
+        // Обработчик событий для записи и отмены записи на занятия 
+
+        activitiesList.addEventListener('click', event => {
+          
+            if (event.target.textContent === 'Записаться') {
+                const numberParticipantsMax=event.target.closest('li').querySelector('.maxNumberParticipants');
+                console.log(numberParticipantsMax.textContent);
+                
+                const numberParticipantscurrent=event.target.closest('li').querySelector('.currentNumberParticipants');
+                
+                console.log(numberParticipantscurrent.textContent);
+
+                if (numberParticipantscurrent.textContent<numberParticipantsMax.textContent){
+                   
+                    numberParticipantscurrent.textContent=Number.parseInt(numberParticipantscurrent.textContent)+1;
+                } else{
+                    console.log(numberParticipantsMax.textContent-numberParticipantscurrent.textContent);
+                    alert("Группа заполнена .Запись невозможна!")
+                }
+                //Сохранение списка продуктов с отзывами в локальное хранилище
+                localStorage.setItem('activities',activitiesList.innerHTML);
+               
+            }
+
+            if (event.target.textContent === 'Отменить запись') {
+               
+                const numberParticipantscurrent=event.target.closest('li').querySelector('.currentNumberParticipants');
+                console.log(numberParticipantscurrent.textContent);
+                if (numberParticipantscurrent.textContent>0){
+                    numberParticipantscurrent.textContent=Number.parseInt(numberParticipantscurrent.textContent)-1;
+                }else{
+                    alert("В группе еще нет записей.")
+                }
+                localStorage.setItem('activities',activitiesList.innerHTML);
+            }
+        });
+
+ 
+    </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>
